@@ -6,7 +6,12 @@
 
 #pragma once
 
-enum ap_message : uint8_t {
+#include "GCS_config.h"
+
+#include <AP_AHRS/AP_AHRS_config.h>
+
+enum ap_message : uint8_t
+{
     MSG_HEARTBEAT,
     MSG_ATTITUDE,
     MSG_ATTITUDE_QUATERNION,
