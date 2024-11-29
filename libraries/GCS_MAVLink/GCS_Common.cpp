@@ -2113,11 +2113,24 @@ void GCS_MAVLINK::send_highres_imu()
     const Vector3f& accel = ins.get_accel();
     const Vector3f& gyro = ins.get_gyro();
 
+    // Get the offset and scale(diag) of the primary IMU.
+    // TODO: What if add the offdiag (refer to AccelCalibrator::get_sample_corrected) here?
+    const Vector3f& acc_offset = ins.get_accel_offsets();
+    const Vector3f& acc_scale = ins.get_accel_scale();
+    Matrix3f M(
+        acc_scale.x,    0,              0,
+        0,              acc_scale.y,    0,
+        0,              0,              acc_scale.z
+    );
+    Vector3f accel_before_cal = accel;
+    // There is " - " because the offset get from AccelCalibrator in AP_InertialSensor is negative.
+    Vector3f accel_after_cal = M * (accel_before_cal - acc_offset);
+
     mavlink_highres_imu_t reply = {
         .time_usec = AP_HAL::micros64(),
-        .xacc = accel.x,
-        .yacc = accel.y,
-        .zacc = accel.z,
+        .xacc = accel_after_cal.x,
+        .yacc = accel_after_cal.y,
+        .zacc = accel_after_cal.z,
         .xgyro = gyro.x,
         .ygyro = gyro.y,
         .zgyro = gyro.z,
