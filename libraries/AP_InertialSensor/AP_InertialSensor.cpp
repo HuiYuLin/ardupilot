@@ -2286,10 +2286,13 @@ bool AP_InertialSensor::setup_throttle_gyro_harmonic_notch(float center_freq_hz,
 */
 void AP_InertialSensor::_acal_save_calibrations()
 {
-    Vector3f bias, gain;
+    Vector3f bias, gain, offdiag;
     for (uint8_t i=0; i<_accel_count; i++) {
         if (_accel_calibrator[i].get_status() == ACCEL_CAL_SUCCESS) {
-            _accel_calibrator[i].get_calibration(bias, gain);
+            _accel_calibrator[i].get_calibration(bias, gain, offdiag);
+            if (i == 0) _accel_offdiag1 = offdiag;
+            if (i == 1) _accel_offdiag2 = offdiag;
+            if (i == 2) _accel_offdiag3 = offdiag;
             _accel_offset(i).set_and_save(bias);
             _accel_scale(i).set_and_save(gain);
             _accel_id(i).save();

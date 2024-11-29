@@ -172,6 +172,15 @@ public:
     const Vector3f &get_accel_scale(uint8_t i) const { return _accel_scale(i); }
     const Vector3f &get_accel_scale(void) const { return get_accel_scale(_primary_accel); }
 
+    // get accel offdiag
+    Vector3f _accel_offdiag1, _accel_offdiag2, _accel_offdiag3;
+    const Vector3f &get_accel_offdiag(uint8_t i) const { 
+        if (i == 0) return _accel_offdiag1;
+        if (i == 1) return _accel_offdiag2;
+        return _accel_offdiag3;
+    }
+    const Vector3f &get_accel_offdiag(void) const {return get_accel_offdiag(_primary_accel);}
+
     // return a 3D vector defining the position offset of the IMU accelerometer in metres relative to the body frame origin
     const Vector3f &get_imu_pos_offset(uint8_t instance) const {
         return _accel_pos(instance);

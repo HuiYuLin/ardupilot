@@ -2117,10 +2117,11 @@ void GCS_MAVLINK::send_highres_imu()
     // TODO: What if add the offdiag (refer to AccelCalibrator::get_sample_corrected) here?
     const Vector3f& acc_offset = ins.get_accel_offsets();
     const Vector3f& acc_scale = ins.get_accel_scale();
+    const Vector3f& acc_offdiag = ins.get_accel_offdiag();
     Matrix3f M(
-        acc_scale.x,    0,              0,
-        0,              acc_scale.y,    0,
-        0,              0,              acc_scale.z
+        acc_scale.x,                acc_offdiag.x,              acc_offdiag.y,
+        acc_offdiag.x,              acc_scale.y,                acc_offdiag.z,
+        acc_offdiag.y,              acc_offdiag.z,              acc_scale.z
     );
     Vector3f accel_before_cal = accel;
     // There is " - " because the offset get from AccelCalibrator in AP_InertialSensor is negative.
